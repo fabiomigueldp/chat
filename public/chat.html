@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Torbware Chat - Starfield Edition</title>
+    <title>Torbware Chat</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.js"></script>
@@ -50,7 +50,7 @@
 
             socket.on('updateUserList', function(users) {
                 const $userList = $('#userList');
-                const selectedUser = $userList.val(); // Salva o usuário selecionado
+                const selectedUser = $userList.val(); 
                 $userList.empty();
                 $userList.append('<option value="">Global Chat</option>');
                 users.forEach(user => {
@@ -58,7 +58,7 @@
                         $userList.append(`<option value="${user.id}">${user.username}</option>`);
                     }
                 });
-                $userList.val(selectedUser); // Restaura o usuário selecionado
+                $userList.val(selectedUser); 
             });
 
             $('button').click(function(event) {
