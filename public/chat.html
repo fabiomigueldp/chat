@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torbware Chat - Starfield Edition</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.js"></script>
+</head>
+<body>
+    <div class="chat-container">
+        <div id="chat">
+            <select id="userList">
+                <option value="">Global Chat</option>
+            </select>
+            <div class="messages"></div>
+            <div class="input-container">
+                <input type="text" id="message" placeholder="Digite sua mensagem">
+                <button type="submit">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            const username = localStorage.getItem('username');
+            if (!username) {
+                window.location.href = 'login.html';
+            }
+
+            const socket = io('http://localhost:23108');
+            socket.emit('login', username);
+
+            function renderMessage(message) {
+                const isPrivate = message.isPrivate ? '(Privado)' : '';
+                $('.messages').append('<div class="message"><strong>' + message.author + ' ' + isPrivate + '</strong>: ' + message.message + '</div>');
+                scrollToBottom();
+            }
+
+            function scrollToBottom() {
+                $('.messages').scrollTop($('.messages')[0].scrollHeight);
+            }
+
+            socket.on('previousMessages', function(messages) {
+                messages.forEach(renderMessage);
+            });
+
+            socket.on('receivedMessage', renderMessage);
+
+            socket.on('updateUserList', function(users) {
+                const $userList = $('#userList');
+                const selectedUser = $userList.val(); // Salva o usuário selecionado
+                $userList.empty();
+                $userList.append('<option value="">Global Chat</option>');
+                users.forEach(user => {
+                    if (user.username !== username) {
+                        $userList.append(`<option value="${user.id}">${user.username}</option>`);
+                    }
+                });
+                $userList.val(selectedUser); // Restaura o usuário selecionado
+            });
+
+            $('button').click(function(event) {
+                event.preventDefault();
+                const message = $('#message').val();
+                const recipientId = $('#userList').val();
+                if (message.length) {
+                    const messageObject = {
+                        author: username,
+                        message,
+                        recipientId,
+                        isPrivate: !!recipientId
+                    };
+                    socket.emit('sendMessage', messageObject);
+                    $('#message').val('');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

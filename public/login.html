@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Torbware Chat</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="login-container">
+        <h2>Entre no Torbware Chat</h2>
+        <form id="login-form">
+            <input type="text" id="username" placeholder="Escolha seu nome de usuário" required>
+            <button type="submit">Entrar no Chat</button>
+        </form>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#login-form').submit(function(e) {
+                e.preventDefault();
+                const username = $('#username').val().trim();
+                if(username) {
+                    localStorage.setItem('username', username);
+                    window.location.href = 'chat.html'; // Certifique-se de redirecionar para a página correta do chat
+                }
+            });
+        });
+    </script>
+</body>
+</html>
